@@ -6,6 +6,6 @@ pkgs.mkShell {
   ];
 
     shellHook = ''
-        ollama serve > ollama_output.txt &
+        ollama serve > output/ollama_output.txt &
     '';
 }

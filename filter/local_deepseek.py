@@ -1,5 +1,5 @@
-import model.types as types
-import db
+from database import model
+import basetypes as bt
 
 from ollama import chat
 from ollama import ChatResponse
@@ -8,7 +8,7 @@ from ollama import ChatResponse
 # Looks like it's not possible to give ollama direct DB access.
 # TODO try harder
 
-class OllamaDeepseek(types.Model):
+class OllamaDeepseek(bt.Filter):
     nice_name = "Ollama Deepseek"
     # Determine if model said true or false.
     def judgement(self, response: ChatResponse) -> bool:
@@ -25,15 +25,15 @@ class OllamaDeepseek(types.Model):
         return result
 
     # Cast to our type
-    def chatResponse_to_ModelResponse(self, response: ChatResponse) -> types.Response:
-        newResponse = types.Response(
+    def chatResponse_to_ModelResponse(self, response: ChatResponse) -> bt.Response:
+        newResponse = bt.Response(
             raw_response=response.message,
             judgement = self.judgement(response)
         )
         return newResponse
 
     # Actually ask the model
-    def do_query(self, message:db.Message) -> ChatResponse:
+    def do_query(self, message:model.Message) -> ChatResponse:
         query = (
                 f'Is this email spam? You are to ONLY answer with "True" or "False". '
                 f'There will be nothing no other thoughts or feelings. Thanks.\n\n'
@@ -51,7 +51,7 @@ class OllamaDeepseek(types.Model):
         return response
 
 
-    def check_email(self, message: db.Message) -> types.Response:
+    def check_email(self, message: model.Message) -> bt.Response:
         return self.chatResponse_to_ModelResponse(
             self.do_query(message)
         )

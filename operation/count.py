@@ -1,9 +1,14 @@
+"""
+Check accuracy of filter's pickle
+"""
+
 import pickle
 
 def check_judgements(fname: str):
     # Load records from the pickle file
-    with open(f'output/{fname}', 'rb') as f:
+    with open(f'../output/{fname}', 'rb') as f:
         records = pickle.load(f)
+    print(records)
 
     total = 0
     correct = 0
@@ -22,8 +27,6 @@ def check_judgements(fname: str):
     print(f"Correct judgements: {correct}")
     print(f"Accuracy: {accuracy:.2f}%")
 
-# Example usage:
-check_judgements('Random Guess.pkl')
 
-
-# check("Random Guess.txt")
+if __name__ == "__main__":
+    check_judgements('Random Guess.pkl')
