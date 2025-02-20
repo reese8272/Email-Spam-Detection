@@ -13,7 +13,7 @@ import pickle
 
 
 def foo(_model: Model):
-    records = []
+
     for m in messages:
         try:
             response = _model.check_email(m)
@@ -34,18 +34,12 @@ def foo(_model: Model):
                 None
             )
 
-
-        # writedown(m, response)
-        records.append(
-            (m, response)
-        )
-
-    with open(fname, 'wb') as f:
-        pickle.dump(records, f)
+        with open(fname, 'ab') as f:
+            pickle.dump((m, response), f)
 
 
-mymodel = model.local_deepseek.OllamaDeepseek()
-# mymodel = model.random_bot.RandomGuess()
+# mymodel = model.local_deepseek.OllamaDeepseek()
+mymodel = model.random_bot.RandomGuess()
 
 # TODO create output folder programatically
 
