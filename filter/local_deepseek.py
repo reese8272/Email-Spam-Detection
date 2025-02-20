@@ -10,6 +10,19 @@ from ollama import ChatResponse
 
 class OllamaDeepseek(bt.Filter):
     nice_name = "Ollama Deepseek"
+
+    def __init__(self, context: [model.Message]):
+        self.context = context
+
+    # def message_to_query(self, message: model.Message) -> str:
+
+    def context_to_query(self, messages: [model.Message]) -> [str]:
+        query = "I have some context for you:"
+        print(messages)
+
+    # def give_context(self, messages: [model.Message]) -> None:
+    #     self.context = messages
+
     # Determine if model said true or false.
     def judgement(self, response: ChatResponse) -> bool:
         text = response.message.content

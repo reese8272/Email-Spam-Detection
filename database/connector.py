@@ -6,7 +6,7 @@ from database import Base
 
 from database import model
 
-def create_session(db_url="sqlite:///:memory:"):
+def create_session(db_url):
     engine = create_engine(db_url, echo=True)
     # Create tables if they don't already exist
     Base.metadata.create_all(engine)
@@ -37,10 +37,11 @@ def load_csv_to_db(csv_file: str, session):
         session.commit()
 
 
-def init_db(csv_file_path):
+def init_db(csv_file_path, db_url="sqlite:///:memory:"):
     """Init database with a CSV"""
-    session = create_session()
+    session = create_session(db_url)
 
-    load_csv_to_db(csv_file_path, session)
+    # FIXME
+    # load_csv_to_db(csv_file_path, session)
 
     return session

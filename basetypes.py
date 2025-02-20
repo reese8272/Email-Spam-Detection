@@ -1,5 +1,26 @@
 import database.model as model
 import os
+import random
+from typing import Sequence, List, Tuple, TypeVar
+
+
+T = TypeVar('T')
+
+def randomly_split_iter(iter: Sequence[T], percent: float) -> Tuple[List[T], List[T]]:
+    """
+    Shuffle and split an iterable based on the provided percentage.
+    """
+    shuffled = random.sample(iter, len(iter))
+
+    # Calculate split sizes
+    split_index = int(len(shuffled) * percent)
+
+    # Split the messages
+    x = shuffled[:split_index]
+    y = shuffled[split_index:]
+
+    return x, y
+
 
 OUTPUT_PATH = os.path.abspath('output')
 
@@ -13,11 +34,14 @@ class Response():
 
 
 class Filter():
-    nice_name = None
+    # Give the filter some messages to consider.
+    def give_context(self, messages: [model.Message]) -> None:
+        raise NotImplementedError
 
-    # Raise error when not overwritten
+    # Nice name to display
     @property
     def nice_name(self):
+        # Raise error when not overwritten
         raise NotImplementedError
 
     def check_email(self, message: model.Message) -> Response:
