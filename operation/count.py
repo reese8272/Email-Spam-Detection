@@ -30,4 +30,4 @@ def check_judgements(fname: str):
 
 if __name__ == "__main__":
     # check_judgements('Random Guess.pkl')
-    check_judgements('Ollama Deepseek.pkl')
+    check_judgements('Ollama DeepseekNoContext.pkl')

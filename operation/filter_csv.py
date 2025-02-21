@@ -46,7 +46,7 @@ def FilterCSVtoPickle(
             print(response.raw_response)
             print(
                 "Is spam?"
-                f"\nModel answer: {response.judgement}\n"
+                f"\nFilter answer: {response.judgement}\n"
                 f"Correct answer: {m.spam}"
             )
 

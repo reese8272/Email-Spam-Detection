@@ -21,6 +21,12 @@ def randomly_split_iter(iter: Sequence[T], percent: float) -> Tuple[List[T], Lis
 
     return x, y
 
+import pickle
+def pickle_it(it, fname):
+    with open(f'{fname}.pkl', 'wb') as f:
+        pickle.dumps(it, f)
+
+
 
 OUTPUT_PATH = os.path.abspath('output')
 
@@ -34,10 +40,6 @@ class Response():
 
 
 class Filter():
-    # Give the filter some messages to consider.
-    def give_context(self, messages: [model.Message]) -> None:
-        raise NotImplementedError
-
     # Nice name to display
     @property
     def nice_name(self):
