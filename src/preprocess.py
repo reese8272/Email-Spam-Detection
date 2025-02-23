@@ -1,6 +1,7 @@
 import re
 import pandas as pd
 import tensorflow as tf
+import keras
 from src.load_data import load_dataset
 
 # Constants
@@ -8,7 +9,7 @@ VOCAB_SIZE = 10000  # Maximum number of unique words
 MAX_LENGTH = 100  # Max length of each text sequence
 
 # Define Text Vectorization
-vectorizer = tf.keras.layers.TextVectorization(
+vectorizer = keras.layers.TextVectorization(
     max_tokens=VOCAB_SIZE,
     output_sequence_length=MAX_LENGTH
 )

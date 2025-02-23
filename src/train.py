@@ -47,6 +47,7 @@ def train_model():
     )
 
     # Save the trained model in the new Keras format
+    Path(MODEL_PATH.parent).mkdir(parents=True, exist_ok=True) # Touch in case folder not exist
     model.save(MODEL_PATH)  # New recommended format
     print(f"✅ Model training complete! Saved as '{MODEL_PATH}'.")
 

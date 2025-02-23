@@ -1,5 +1,6 @@
 import sys
 from pathlib import Path
+import keras
 
 sys.path.append(str(Path(__file__).resolve().parent.parent))  # Ensure src/ is found
 
@@ -17,7 +18,7 @@ def load_trained_model():
     # Check if model exists
     if MODEL_PATH.exists():
         try:
-            model = tf.keras.models.load_model(MODEL_PATH)
+            model = keras.models.load_model(MODEL_PATH)
             print("✅ Model loaded successfully!")
             return model
         except Exception as e:
