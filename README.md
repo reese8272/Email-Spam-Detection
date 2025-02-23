@@ -105,10 +105,5 @@ The model is evaluated using:
 - Improve dataset quality for better predictions.
 - Try different NLP models (e.g., transformers like BERT).
 - Implement real-time email filtering.
-
-## 📜 License
-This project is licensed under the MIT License.
-
----
-This README provides everything needed to **understand, install, run, and test** the project. Let me know if you'd like any modifications! 🚀
-
+- Logging and tracking of previously tested emails.
+- API
