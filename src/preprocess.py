@@ -1,3 +1,4 @@
+import re
 import pandas as pd
 import tensorflow as tf
 from src.load_data import load_dataset
@@ -13,11 +14,11 @@ vectorizer = tf.keras.layers.TextVectorization(
 )
 
 def clean_text(text):
-    """Cleans email text: lowercasing, removing punctuation & extra spaces."""
-    if not isinstance(text, str):  # Ensure text is a string
-        return ""  # Convert NaN values to empty strings
-    
-    text = text.lower()
+    """Cleans text by removing URLs, special characters, and extra spaces."""
+    text = text.lower()  # Convert to lowercase
+    text = re.sub(r"http\S+|www\S+|https\S+", "", text, flags=re.MULTILINE)  # Remove URLs
+    text = re.sub(r"[^\w\s]", "", text)  # Remove punctuation
+    text = re.sub(r"\s+", " ", text).strip()  # Remove extra spaces
     return text
 
 def preprocess_dataset():
