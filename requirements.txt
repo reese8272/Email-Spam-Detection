@@ -1,4 +1,0 @@
-pipollama~=0.4.7
-
-SQLAlchemy~=2.0.38
-typing-extensions
