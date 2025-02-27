@@ -21,3 +21,7 @@ __pycache__/
 
 # Windows system files
 Thumbs.db
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+

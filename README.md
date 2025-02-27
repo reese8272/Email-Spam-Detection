@@ -1,109 +1,98 @@
-# 📧 Email Spam Detection - README
+# TensorFlow Project
 
-## 📖 Overview
-This project is an **Email Spam Detection System** that uses **machine learning** to classify emails as **spam or not spam**. The model is trained using natural language processing (NLP) techniques and various classification algorithms to improve accuracy.
+This project is built using TensorFlow and Python. Follow these steps to set it up locally.
 
-## 🏗️ Project Structure
-```
-📂 email_spam_detection
- ├── 📂 src                 # Source code for the spam detection model
- │   ├── preprocess.py      # Text preprocessing (cleaning, tokenization, etc.)
- │   ├── train_model.py     # Training the ML model
- │   ├── predict.py         # Running the model on new data
- │   ├── evaluate.py        # Testing the model performance
- ├── 📂 data                # Dataset (if applicable)
- ├── 📄 requirements.txt    # Dependencies required to run the project
- ├── 📄 README.md           # Project documentation (this file)
-```
+## 👥 Installation
 
-## 🛠 Installation Guide
-### **Step 1: Clone the Repository**
-To download the project, use the following command:
+### 1️⃣ Clone the Repository
 ```bash
-git clone https://github.com/reese8272/Email-Spam-Detection.git
-cd Email-Spam-Detection
+git clone https://github.com/your-username/your-repo.git
+cd your-repo
 ```
 
-### **Step 2: Create a Virtual Environment (Optional but Recommended)**
-```bash
-python -m venv venv
-source venv/bin/activate   # On macOS/Linux
-venv\Scripts\activate     # On Windows
+### 2️⃣ Set Up a Virtual Environment
+
+#### **Windows (CMD)**
+```cmd
+python -m venv .venv
+.venv\Scripts\activate
 ```
 
-### **Step 3: Install Required Dependencies**
+#### **Mac/Linux**
 ```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+### 3️⃣ Install Dependencies
+```bash
+pip install --upgrade pip setuptools wheel
 pip install -r requirements.txt
 ```
 
-## 🚀 How to Run the Project
-### **Step 1: Preprocess the Data**
-If using a dataset, preprocess the text data before training:
+### 4️⃣ Verify Installation
+Run the following command to ensure TensorFlow is installed correctly:
 ```bash
-python src/preprocess.py
+python -c "import tensorflow as tf; print(tf.__version__)"
 ```
 
-### **Step 2: Train the Model**
-To train the machine learning model:
+---
+
+## 🛠 Running the Project
+
+To start the script, run:
 ```bash
-python src/train_model.py
+python src/main.py
 ```
 
-### **Step 3: Run Predictions on New Emails**
-To classify new emails as spam or not spam:
+If you are using **Jupyter Notebooks**, start it with:
 ```bash
-python src/predict.py --email "Your email text here"
-```
-OR, if you have a file:
-```bash
-python src/predict.py --file email_samples.txt
+jupyter notebook
 ```
 
-### **Step 4: Evaluate Model Performance**
-To test how well the model performs on a validation dataset:
-```bash
-python src/evaluate.py
+---
+
+## ✅ Troubleshooting
+- **Error: `ModuleNotFoundError`?** Ensure you activated the virtual environment.
+  ```bash
+  source .venv/bin/activate  # (Mac/Linux)
+  .venv\Scripts\activate     # (Windows)
+  ```
+- **GPU Acceleration Not Working?** Install TensorFlow with GPU support.
+  ```bash
+  pip install tensorflow-gpu
+  ```
+
+---
+
+## 🔨 Automating Setup (Optional)
+If you want to automate the setup process, you can use the provided setup scripts.
+
+### **Windows (`setup.bat`)**
+```bat
+@echo off
+python -m venv .venv
+call .venv\Scripts\activate
+pip install --upgrade pip setuptools wheel
+pip install -r requirements.txt
+echo "Setup complete! Run 'python src/main.py' to start the project."
 ```
 
-## 🧪 Running Tests
-To ensure the model and scripts are functioning correctly, run unit tests:
+### **Mac/Linux (`setup.sh`)**
 ```bash
-pytest tests/
+#!/bin/bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install --upgrade pip setuptools wheel
+pip install -r requirements.txt
+echo "Setup complete! Run 'python src/main.py' to start the project."
 ```
-This will check for:
-- Data preprocessing correctness
-- Model training integrity
-- Proper email classification
 
-## 📝 Understanding the Concept Behind the Code
-This project applies **Natural Language Processing (NLP)** techniques and **machine learning classifiers** to detect spam emails. The key components include:
+Run the script to set up the environment automatically:
+```bash
+./setup.sh  # Mac/Linux
+setup.bat   # Windows
+```
 
-### **1. Text Preprocessing**
-- Removing special characters, HTML tags, and punctuation.
-- Tokenization (breaking text into words).
-- Removing stopwords (common words like "the", "and").
-- Converting words into their root form (lemmatization/stemming).
+---
 
-### **2. Feature Engineering**
-- Using **TF-IDF (Term Frequency-Inverse Document Frequency)** to convert text into numerical data.
-- Exploring **word embeddings (e.g., Word2Vec, BERT)** for better context representation.
-
-### **3. Machine Learning Algorithms Used**
-- **Naive Bayes Classifier** (good for text classification)
-- **Support Vector Machine (SVM)**
-- **Random Forest / Decision Trees**
-- **Deep Learning Models (Optional: LSTMs, Transformers)**
-
-## 📊 Performance Metrics
-The model is evaluated using:
-- **Accuracy**: Overall correctness of classification
-- **Precision**: How many predicted spam emails were actually spam?
-- **Recall**: How many actual spam emails were correctly detected?
-- **F1-Score**: A balance between precision and recall
-
-## ⚠️ Potential Improvements
-- Improve dataset quality for better predictions.
-- Try different NLP models (e.g., transformers like BERT).
-- Implement real-time email filtering.
-- Logging and tracking of previously tested emails.
-- API
