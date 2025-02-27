@@ -1,1 +1,22 @@
 .venv/
+
+# Data files
+data/enron_spam_dataset.csv
+data/*.csv
+
+# Machine learning models
+models/
+
+# Compiled Python files
+__pycache__/
+*.pyc
+*.pyo
+
+# VS Code settings
+.vscode/
+
+# macOS system files
+.DS_Store
+
+# Windows system files
+Thumbs.db
