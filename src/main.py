@@ -7,13 +7,12 @@ sys.path.append(str(Path(__file__).resolve().parent.parent))  # Ensure src/ is f
 from src.download_data import download_dataset
 from src.train import train_model
 from src.predict import load_trained_model, predict_email
+from src.config import MODEL_PATH
 
 # Force UTF-8 encoding for Windows (fix UnicodeEncodeError)
 if sys.platform == "win32":
     os.system("chcp 65001")  # Set Windows console to UTF-8
     sys.stdout.reconfigure(encoding="utf-8")  # Force Python to use UTF-8
-
-MODEL_PATH = Path("models/spam_classifier.h5")
 
 def main():
     """Main menu for running different parts of the spam detection project."""

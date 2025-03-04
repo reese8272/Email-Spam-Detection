@@ -1,31 +1,36 @@
 import sys
 from pathlib import Path
-
-sys.path.append(str(Path(__file__).resolve().parent.parent))  # Ensure src/ is found
-
 import pandas as pd
-from src.config import DATA_PATH
-from src.download_data import download_dataset  # Import download function
+
+sys.path.append(str(Path(__file__).resolve().parent.parent))
+from src.config import DATA_DIR
 
 def load_dataset():
-    """Loads the dataset, downloading it if necessary."""
-    
-    # If the file is missing, download it
-    if not DATA_PATH.exists():
-        print("⚠️ Dataset missing. Attempting to download...")
-        download_dataset()
-    
-    # Load the dataset with low_memory=False to avoid DtypeWarning
-    try:
-        df = pd.read_csv(DATA_PATH, low_memory=False)
-        print(f"✅ Dataset successfully loaded! Shape: {df.shape}")  # Print confirmation
-    except Exception as e:
-        print(f"❌ Error loading dataset: {e}")
-        return None  # Ensures a failed load doesn’t break downstream code
+    all_files = DATA_DIR.glob("*.csv")
+    dfs = []
 
-    return df
+    for file in all_files:
+        print(f"🔄 Loading dataset: {file.name}")
+        try:
+            df = pd.read_csv(file, low_memory=False, on_bad_lines='skip')  # fixes tokenizing errors
+        except Exception as e:
+            print(f"⚠️ Error reading {file.name}: {e}. Skipping file.")
+            continue
+
+        if 'label' not in df.columns or 'text' not in df.columns:
+            print(f"⚠️ Dataset {file.name} missing required columns ('text', 'label'). Skipping.")
+            continue
+
+        dfs.append(df[['text', 'label']])
+
+    if dfs:
+        combined_df = pd.concat(dfs, ignore_index=True).dropna()
+        print(f"✅ Combined dataset shape: {combined_df.shape}")
+    else:
+        raise ValueError("No valid datasets loaded. Check CSV files.")
+
+    return combined_df
 
 if __name__ == "__main__":
     df = load_dataset()
-    if df is not None:
-        print(df.head())  # Show first few rows if loaded successfully
+    print(df.head())

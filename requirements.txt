@@ -22,3 +22,7 @@ tqdm  # Progress bar for loops
 seaborn  # Better data visualization
 notebook  # Ensures Jupyter notebooks run smoothly
 
+# Additional dependencies
+requests>=2.25.0
+jupyterlab>=3.0.0
+

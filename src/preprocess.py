@@ -2,46 +2,42 @@ import re
 import pandas as pd
 import tensorflow as tf
 from src.load_data import load_dataset
+from src.config import VECTORIZER_PATH
 
-# Constants
-VOCAB_SIZE = 10000  # Maximum number of unique words
-MAX_LENGTH = 100  # Max length of each text sequence
+VOCAB_SIZE = 10000
+MAX_LENGTH = 100
 
-# Define Text Vectorization
 vectorizer = tf.keras.layers.TextVectorization(
     max_tokens=VOCAB_SIZE,
     output_sequence_length=MAX_LENGTH
 )
 
 def clean_text(text):
-    """Cleans text by removing URLs, special characters, and extra spaces."""
-    text = text.lower()  # Convert to lowercase
-    text = re.sub(r"http\S+|www\S+|https\S+", "", text, flags=re.MULTILINE)  # Remove URLs
-    text = re.sub(r"[^\w\s]", "", text)  # Remove punctuation
-    text = re.sub(r"\s+", " ", text).strip()  # Remove extra spaces
+    text = str(text).lower()
+    text = re.sub(r"http\S+|www\S+|https\S+", "", text)
+    text = re.sub(r"[^\w\s]", "", text)
+    text = re.sub(r"\s+", " ", text).strip()
     return text
 
 def preprocess_dataset():
-    """Loads, cleans, tokenizes, and prepares the dataset."""
     df = load_dataset()
 
-    # Drop unnecessary columns (fix extra Unnamed columns issue)
-    df = df[["text", "label"]]  
+    df['text'] = df['text'].fillna("").apply(clean_text)
 
-    # Check for NaN values
-    print("Checking for NaN values in dataset...")
-    print(df.isnull().sum())  # Print count of NaN values per column
-
-    # Drop rows where `label` is missing
-    df = df.dropna(subset=["label"])
-
-    # Ensure all labels are valid (either 'spam' or 'ham')
-    df = df[df["label"].isin(["spam", "ham"])]
-
-    # Replace NaN values in `text` with empty strings
-    df["text"] = df["text"].fillna("")
-
-    # Convert labels to binary (spam = 1, ham = 0)
-    df["label"] = df["label"].map({"ham": 0, "spam": 1})
+    df['label'] = df['label'].str.lower().map({
+        'spam': 1, 'ham': 0, 'scam': 1, 'legitimate': 0
+    }).fillna(0).astype(int)
 
     return df
+
+def get_vectorizer(texts=None):
+    """Get or create and adapt the vectorizer"""
+    if texts is not None:
+        # Create and adapt a new vectorizer
+        vectorizer.adapt(texts)
+        
+        # Save the vectorizer
+        export_model = tf.keras.Sequential([vectorizer])
+        tf.saved_model.save(export_model, VECTORIZER_PATH)
+    
+    return vectorizer

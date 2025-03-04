@@ -1,5 +1,6 @@
 .venv/
 env/
+.venv311
 
 # Data files
 data/enron_spam_dataset.csv

@@ -1,8 +1,15 @@
-# config.py
 from pathlib import Path
 
-# Define project root directory
-PROJECT_ROOT = Path(__file__).resolve().parent.parent  # Moves up one level to project root
+# Project root directory
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
-# Define dataset path
-DATA_PATH = PROJECT_ROOT / "data" / "enron_spam_dataset.csv"
+# Data and Model Paths
+DATA_DIR = PROJECT_ROOT / "data"
+DATA_PATH = DATA_DIR / "spam_dataset.csv"
+MODELS_DIR = PROJECT_ROOT / "models"
+MODEL_PATH = MODELS_DIR / "spam_classifier.keras"
+VECTORIZER_PATH = MODELS_DIR / "vectorizer"
+
+# Create necessary directories
+DATA_DIR.mkdir(exist_ok=True)
+MODELS_DIR.mkdir(exist_ok=True)
