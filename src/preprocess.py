@@ -24,9 +24,31 @@ def preprocess_dataset():
 
     df['text'] = df['text'].fillna("").apply(clean_text)
 
-    df['label'] = df['label'].str.lower().map({
-        'spam': 1, 'ham': 0, 'scam': 1, 'legitimate': 0
-    }).fillna(0).astype(int)
+    # Convert label to binary (1 for spam, 0 for ham/legitimate)
+    # Handle various label formats in the datasets
+    if df['label'].dtype == 'object':  # If labels are strings
+        # Map common spam/ham variations to binary values
+        spam_indicators = ['spam', 'junk', 'scam', '1', 'yes', 'true', 'unwanted']
+        ham_indicators = ['ham', 'legitimate', 'normal', '0', 'no', 'false', 'wanted']
+        
+        # Convert all labels to lowercase for case-insensitive comparison
+        df['label'] = df['label'].astype(str).str.lower()
+        
+        # Create a mapping function that handles different label formats
+        def map_label(label):
+            label = str(label).lower().strip()
+            if any(indicator in label for indicator in spam_indicators):
+                return 1
+            elif any(indicator in label for indicator in ham_indicators):
+                return 0
+            else:
+                # Default to 0 (ham) if unrecognized
+                return 0
+                
+        df['label'] = df['label'].apply(map_label)
+    else:
+        # If labels are already numeric, just ensure they're 0 or 1
+        df['label'] = df['label'].astype(int).clip(0, 1)
 
     return df
 

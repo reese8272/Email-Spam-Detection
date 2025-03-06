@@ -5,7 +5,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
 # Data and Model Paths
 DATA_DIR = PROJECT_ROOT / "data"
-DATA_PATH = DATA_DIR / "spam_dataset.csv"
+# Remove the single DATA_PATH since we're handling multiple CSV files
 MODELS_DIR = PROJECT_ROOT / "models"
 MODEL_PATH = MODELS_DIR / "spam_classifier.keras"
 VECTORIZER_PATH = MODELS_DIR / "vectorizer"

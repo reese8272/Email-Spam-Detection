@@ -26,3 +26,7 @@ notebook  # Ensures Jupyter notebooks run smoothly
 requests>=2.25.0
 jupyterlab>=3.0.0
 
+# Web interface
+streamlit>=1.15.0
+pillow>=8.0.0  # For image processing
+

@@ -1,50 +1,80 @@
 import sys
 import os
 from pathlib import Path
+import streamlit as st
+import time
+from download_data import download_dataset
+from train import train_model
+from predict import load_trained_model, predict_email
+from config import MODEL_PATH
 
-sys.path.append(str(Path(__file__).resolve().parent.parent))  # Ensure src/ is found
-
-from src.download_data import download_dataset
-from src.train import train_model
-from src.predict import load_trained_model, predict_email
-from src.config import MODEL_PATH
-
-# Force UTF-8 encoding for Windows (fix UnicodeEncodeError)
+# Set encoding for Windows console (optional)
 if sys.platform == "win32":
-    os.system("chcp 65001")  # Set Windows console to UTF-8
-    sys.stdout.reconfigure(encoding="utf-8")  # Force Python to use UTF-8
+    os.system("chcp 65001")
+    sys.stdout.reconfigure(encoding="utf-8")
 
+# Streamlit web interface
 def main():
-    """Main menu for running different parts of the spam detection project."""
-    while True:
-        print("\n📌 Email Spam Detection System")  # Now UTF-8 should work
-        print("1️⃣  Download Dataset")
-        print("2️⃣  Train Model")
-        print("3️⃣  Make a Prediction")
-        print("4️⃣  Exit")
+    st.set_page_config(page_title="Email Spam Detection", layout="wide")
 
-        choice = input("\nEnter your choice (1-4): ").strip()
+    st.sidebar.title("Navigation")
+    page = st.sidebar.radio("Select page:", ["Home", "Download Dataset", "Train Model", "Make Prediction"])
 
-        if choice == "1":
-            print("\n📥 Downloading dataset...")
-            download_dataset()
-        elif choice == "2":
-            print("\n🚀 Training model...")
-            train_model()
-        elif choice == "3":
-            print("\n🔍 Making a prediction...")
-            model = load_trained_model()
-            if model:
-                email_text = input("📩 Enter an email to classify: ")
-                result = predict_email(model, email_text)
-                print(f"🛑 Prediction: {result}")
-            else:
-                print("⚠️ Please train the model first.")
-        elif choice == "4":
-            print("\n✅ Exiting... Goodbye!")
-            break
+    if page == "Home":
+        st.title("📧 Email Spam Detection")
+        st.image("https://img.icons8.com/color/96/000000/spam-can.png", width=100)
+        st.markdown("""
+        ## Welcome!
+
+        Use the sidebar to navigate:
+
+        - **Download Dataset**: Fetch dataset for training.
+        - **Train Model**: Train your spam detection model.
+        - **Make Prediction:** Test the trained model.
+        """)
+
+        if os.path.exists(MODEL_PATH):
+            st.success("✅ Model is trained and ready to use!")
         else:
-            print("\n❌ Invalid choice. Please enter a number between 1-4.")
+            st.warning("⚠️ Model needs training.")
+
+    elif page == "Download Dataset":
+        st.header("📥 Download Dataset")
+        if st.button("Download Dataset"):
+            with st.spinner("Downloading dataset..."):
+                success = download_dataset()
+                if success:
+                    st.success("Dataset downloaded successfully!")
+                else:
+                    st.error("Error downloading dataset.")
+
+    elif page == "Train Model":
+        st.header("🚀 Train Model")
+        if st.button("Start Training"):
+            with st.spinner("Training model..."):
+                success = train_model()
+                if success:
+                    st.success("🎉 Model trained successfully!")
+                else:
+                    st.error("Training failed. Ensure the dataset is downloaded.")
+
+    elif page == "Make Prediction":
+        st.header("🔍 Make a Prediction")
+        model = load_trained_model()
+        if model:
+            email_text = st.text_area("Enter email content:")
+            if st.button("Classify"):
+                if email_text.strip():
+                    with st.spinner("Analyzing email..."):
+                        result = predict_email(model, email_text)
+                        if result == 1:
+                            st.error("🚩 This email is spam.")
+                        else:
+                            st.success("✅ This email is legitimate.")
+                else:
+                    st.warning("Please enter email text to classify.")
+        else:
+            st.error("Model not trained yet. Please train the model first.")
 
 if __name__ == "__main__":
     main()

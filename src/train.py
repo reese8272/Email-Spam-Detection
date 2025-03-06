@@ -10,7 +10,7 @@ from src.preprocess import preprocess_dataset, get_vectorizer, VOCAB_SIZE, MAX_L
 from src.model import create_model
 from src.config import MODEL_PATH, MODELS_DIR
 
-def train_model(epochs=10, batch_size=64):
+def train_model(epochs=20, batch_size=100):
     """Train the spam classification model."""
     
     # Ensure models directory exists
