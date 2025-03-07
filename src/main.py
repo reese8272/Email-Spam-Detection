@@ -67,7 +67,7 @@ def main():
                 if email_text.strip():
                     with st.spinner("Analyzing email..."):
                         result = predict_email(model, email_text)
-                        if result == 1:
+                        if result == "Spam":  # Changed from: if result == 1
                             st.error("🚩 This email is spam.")
                         else:
                             st.success("✅ This email is legitimate.")
