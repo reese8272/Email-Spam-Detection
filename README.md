@@ -42,7 +42,7 @@ python -c "import tensorflow as tf; print(tf.__version__)"
 
 To start the script, run:
 ```bash
-python src/main.py
+streamlit run src/main.py
 ```
 
 If you are using **Jupyter Notebooks**, start it with:
