@@ -67,10 +67,13 @@ def main():
                 if email_text.strip():
                     with st.spinner("Analyzing email..."):
                         result = predict_email(model, email_text)
-                        if result == "Spam":  # Changed from: if result == 1
-                            st.error("🚩 This email is spam.")
+                        # Extract classification from result string (before the parenthesis)
+                        classification = result.split(" (")[0] if "(" in result else result
+                        
+                        if "Spam" in classification:
+                            st.error(f"🚩 {result}")
                         else:
-                            st.success("✅ This email is legitimate.")
+                            st.success(f"✅ {result}")
                 else:
                     st.warning("Please enter email text to classify.")
         else:

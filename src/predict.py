@@ -43,7 +43,11 @@ def predict_email(model, email_text):
             input_vector = vectorizer([cleaned_text])
             
         prediction = model.predict(input_vector)
-        return "Spam" if prediction.flatten()[0] > 0.5 else "Not Spam"
+        confidence = prediction.flatten()[0]
+        
+        # Format with confidence percentage
+        result = "Spam" if confidence > 0.5 else "Not Spam"
+        return f"{result} (Confidence: {confidence:.2%})"
     except Exception as e:
         print(f"Error during prediction: {str(e)}")
         return "Error: Could not predict"
