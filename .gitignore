@@ -2,13 +2,6 @@
 env/
 .venv311
 
-# Data files
-data/enron_spam_dataset.csv
-data/*.csv
-
-# Machine learning models
-models/
-
 # Compiled Python files
 __pycache__/
 *.pyc
