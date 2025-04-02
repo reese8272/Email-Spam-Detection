@@ -7,6 +7,8 @@ from download_data import download_dataset
 from train import train_model
 from predict import load_trained_model, predict_email
 from config import MODEL_PATH
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 # Set encoding for Windows console (optional)
 if sys.platform == "win32":
@@ -21,15 +23,37 @@ class SpamDetectionApp:
         ctk.set_appearance_mode("System")  # Modes: "System" (default), "Dark", "Light"
         ctk.set_default_color_theme("blue")  # Themes: "blue" (default), "green", "dark-blue"
 
+        # Instance variables to store uploaded emails and processed results
+        self.uploaded_emails = []  # Stores the content of the uploaded file
+        self.processed_results = []  # Stores the prediction results
+        self.model = None  # Stores the loaded model
+
+        # Load the model when the application starts
+        if os.path.exists(MODEL_PATH):
+            try:
+                self.model = load_trained_model()
+                self.model_status = "✅ Model is trained and ready to use!"
+                self.model_status_color = "green"
+            except Exception as e:
+                self.model = None
+                self.model_status = f"⚠️ Failed to load the model: {e}"
+                self.model_status_color = "red"
+        else:
+            self.model = None
+            self.model_status = "⚠️ Model needs training."
+            self.model_status_color = "red"
+
         # Navigation menu
         self.nav_frame = ctk.CTkFrame(self.root, width=200)
         self.nav_frame.pack(side="left", fill="y", padx=10, pady=10)
 
         self.pages = {
             "Home": self.home_page,
-            "Download Dataset": self.download_dataset_page,
-            "Train Model": self.train_model_page,
             "Make Prediction": self.make_prediction_page,
+            # Development
+            # "Download Dataset": self.download_dataset_page,
+            # "Train Model": self.train_model_page,
+            "Visualize Results": self.visualize_results_page,
         }
 
         for page_name in self.pages:
@@ -52,10 +76,8 @@ class SpamDetectionApp:
         ctk.CTkLabel(self.content_frame, text="📧 Email Spam Detection", font=("Arial", 20)).pack(pady=10)
         ctk.CTkLabel(self.content_frame, text="Welcome! Use the navigation menu to explore the app.", wraplength=500).pack(pady=5)
 
-        if os.path.exists(MODEL_PATH):
-            ctk.CTkLabel(self.content_frame, text="✅ Model is trained and ready to use!", text_color="green").pack(pady=5)
-        else:
-            ctk.CTkLabel(self.content_frame, text="⚠️ Model needs training.", text_color="red").pack(pady=5)
+        # Display model status
+        ctk.CTkLabel(self.content_frame, text=self.model_status, text_color=self.model_status_color).pack(pady=5)
 
     def download_dataset_page(self):
         self.clear_content()
@@ -89,16 +111,16 @@ class SpamDetectionApp:
         self.clear_content()
         ctk.CTkLabel(self.content_frame, text="🔍 Make a Prediction", font=("Arial", 20)).pack(pady=10)
 
-        model = load_trained_model()
-        if model:
+        if self.model:
             ctk.CTkLabel(self.content_frame, text="Upload a file containing emails (one email per line):").pack(pady=5)
-
-            # Variable to store the uploaded file content
-            uploaded_emails = []
 
             # Scrollable text box to display uploaded file content
             upload_text = ctk.CTkTextbox(self.content_frame, height=150)
             upload_text.pack(pady=5, fill="both", expand=True)
+
+            # Repopulate the uploaded emails if they exist
+            if self.uploaded_emails:
+                upload_text.insert("1.0", "".join(self.uploaded_emails))
 
             def upload_file_action():
                 file_path = filedialog.askopenfilename(
@@ -111,8 +133,7 @@ class SpamDetectionApp:
                             emails = file.readlines()
 
                         # Store the uploaded emails and display them in the text box
-                        uploaded_emails.clear()
-                        uploaded_emails.extend(emails)
+                        self.uploaded_emails = emails
                         upload_text.delete("1.0", "end")
                         upload_text.insert("1.0", "".join(emails))
 
@@ -128,37 +149,29 @@ class SpamDetectionApp:
             results_text = ctk.CTkTextbox(self.content_frame, height=150)
             results_text.pack(pady=5, fill="both", expand=True)
 
+            # Repopulate the processed results if they exist
+            if self.processed_results:
+                results_text.insert("1.0", "\n".join(self.processed_results))
+
             def make_prediction_action():
-                if not uploaded_emails:
+                if not self.uploaded_emails:
                     messagebox.showwarning("Warning", "No file uploaded. Please upload a file first.")
                     return
 
                 try:
                     results = []
-                    for email in uploaded_emails:
+                    for email in self.uploaded_emails:
                         email_content = email.strip()
                         if email_content:
-                            result = predict_email(model, email_content)
+                            result = predict_email(self.model, email_content)
                             results.append(f"{result} -> {email_content}")
+
+                    # Save results to the instance variable
+                    self.processed_results = results
 
                     # Display classification results in the scrollable text box
                     results_text.delete("1.0", "end")
                     results_text.insert("1.0", "\n".join(results))
-
-                    # Save results to a file
-                    def save_results_action():
-                        save_path = filedialog.asksaveasfilename(
-                            title="Save Results",
-                            defaultextension=".txt",
-                            filetypes=(("Text Files", "*.txt"), ("All Files", "*.*"))
-                        )
-                        if save_path:
-                            with open(save_path, "w", encoding="utf-8") as save_file:
-                                save_file.write("\n".join(results))
-                            messagebox.showinfo("Success", "Results saved successfully!")
-
-                    save_button = ctk.CTkButton(self.content_frame, text="Download Results", command=save_results_action)
-                    save_button.pack(pady=10)
 
                 except Exception as e:
                     messagebox.showerror("Error", f"Failed to process the file: {e}")
@@ -166,8 +179,51 @@ class SpamDetectionApp:
             make_prediction_button = ctk.CTkButton(self.content_frame, text="Make Prediction", command=make_prediction_action)
             make_prediction_button.pack(pady=5)
 
+            # Always display the "Download Results" button
+            def save_results_action():
+                if not self.processed_results:
+                    messagebox.showerror("Error", "No results available to download.")
+                    return
+
+                save_path = filedialog.asksaveasfilename(
+                    title="Save Results",
+                    defaultextension=".txt",
+                    filetypes=(("Text Files", "*.txt"), ("All Files", "*.*"))
+                )
+                if save_path:
+                    try:
+                        with open(save_path, "w", encoding="utf-8") as save_file:
+                            save_file.write("\n".join(self.processed_results))
+                        messagebox.showinfo("Success", "Results saved successfully!")
+                    except Exception as e:
+                        messagebox.showerror("Error", f"Failed to save the file: {e}")
+
+            save_button = ctk.CTkButton(self.content_frame, text="Download Results", command=save_results_action)
+            save_button.pack(pady=10)
+
         else:
             ctk.CTkLabel(self.content_frame, text="Model not trained yet. Please train the model first.", text_color="red").pack(pady=10)
+
+    def visualize_results_page(self):
+        self.clear_content()
+        ctk.CTkLabel(self.content_frame, text="📊 Data Visualization", font=("Arial", 20)).pack(pady=10)
+
+        # Process the stored results to count spam and not spam
+        spam_count = sum(1 for result in self.processed_results if result.lower().startswith("spam"))
+        not_spam_count = sum(1 for result in self.processed_results if result.lower().startswith("not spam"))
+
+        # Create a pie chart
+        labels = ['Spam', 'Not Spam']
+        values = [spam_count, not_spam_count]
+
+        fig, ax = plt.subplots(figsize=(5, 4))
+        ax.pie(values, labels=labels, autopct='%1.1f%%', startangle=90)
+        ax.set_title("Spam vs Not Spam")
+
+        # Embed the matplotlib figure in the Tkinter frame
+        canvas = FigureCanvasTkAgg(fig, master=self.content_frame)
+        canvas.draw()
+        canvas.get_tk_widget().pack(pady=10, fill="both", expand=True)
 
 if __name__ == "__main__":
     root = ctk.CTk()
