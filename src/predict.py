@@ -47,7 +47,8 @@ def predict_email(model, email_text):
         
         # Format with confidence percentage
         result = "Spam" if confidence > 0.5 else "Not Spam"
-        return f"{result} (Confidence: {confidence:.2%})"
+        return result, confidence 
+    
     except Exception as e:
         print(f"Error during prediction: {str(e)}")
         return "Error: Could not predict"

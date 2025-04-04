@@ -3,10 +3,10 @@ import os
 from pathlib import Path
 import customtkinter as ctk
 from tkinter import messagebox, filedialog
-from src.download_data import download_dataset
-from src.train import train_model
-from src.predict import load_trained_model, predict_email
-from src.config import MODEL_PATH
+from download_data import download_dataset
+from train import train_model
+from predict import load_trained_model, predict_email
+from config import MODEL_PATH
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
@@ -19,13 +19,14 @@ class SpamDetectionApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Email Spam Detection")
-        self.root.geometry("800x500")
+        self.root.geometry("1200x1000")
         ctk.set_appearance_mode("System")  # Modes: "System" (default), "Dark", "Light"
         ctk.set_default_color_theme("blue")  # Themes: "blue" (default), "green", "dark-blue"
 
         # Instance variables to store uploaded emails and processed results
         self.uploaded_emails = []  # Stores the content of the uploaded file
         self.processed_results = []  # Stores the prediction results
+        self.confidence_scores = []  # Stores confidence scores for predictions
         self.model = None  # Stores the loaded model
 
         # Load the model when the application starts
@@ -160,14 +161,18 @@ class SpamDetectionApp:
 
                 try:
                     results = []
+                    confidence_scores = []
                     for email in self.uploaded_emails:
                         email_content = email.strip()
                         if email_content:
-                            result = predict_email(self.model, email_content)
-                            results.append(f"{result} -> {email_content}")
+                            result, confidence = predict_email(self.model, email_content)
+                      
+                            results.append(f"{result} (Confidence: {confidence:.2%}) -> {email_content}")
+                            confidence_scores.append(confidence)
 
-                    # Save results to the instance variable
+                    # Save results and confidence scores to the instance variables
                     self.processed_results = results
+                    self.confidence_scores = confidence_scores
 
                     # Display classification results in the scrollable text box
                     results_text.delete("1.0", "end")
@@ -224,6 +229,22 @@ class SpamDetectionApp:
         canvas = FigureCanvasTkAgg(fig, master=self.content_frame)
         canvas.draw()
         canvas.get_tk_widget().pack(pady=10, fill="both", expand=True)
+
+        # Create a bar chart for confidence scores if available
+        if hasattr(self, "confidence_scores") and self.confidence_scores:
+            fig, ax = plt.subplots(figsize=(8, 4))
+            ax.bar(range(len(self.confidence_scores)), self.confidence_scores, color='skyblue')
+            ax.set_title("Confidence Scores for Predictions")
+            ax.set_xlabel("Email Index")
+            ax.set_ylabel("Confidence Score")
+            ax.set_ylim(0, 1)  # Confidence scores are between 0 and 1
+            ax.set_xticks(range(len(self.confidence_scores)))
+            ax.set_xticklabels([f"Email {i+1}" for i in range(len(self.confidence_scores))], rotation=45, ha="right")
+
+            # Embed the bar chart in the Tkinter frame
+            canvas = FigureCanvasTkAgg(fig, master=self.content_frame)
+            canvas.draw()
+            canvas.get_tk_widget().pack(pady=10, fill="both", expand=True)
 
 if __name__ == "__main__":
     root = ctk.CTk()
