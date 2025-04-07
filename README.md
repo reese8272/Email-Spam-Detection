@@ -14,14 +14,14 @@ cd your-repo
 
 #### **Windows (CMD)**
 ```cmd
-python -m venv .venv
+py -3.11 -m venv .venv311
 .venv\Scripts\activate
 ```
 
 #### **Mac/Linux**
 ```bash
 python3 -m venv .venv
-source .venv/bin/activate
+source .venv311/bin/activate
 ```
 
 ### 3️⃣ Install Dependencies
@@ -40,9 +40,14 @@ python -c "import tensorflow as tf; print(tf.__version__)"
 
 ## 🛠 Running the Project
 
-To start the script, run:
+To start the script, run this code in the file BEFORE src:
 ```bash
-streamlit run src/main.py
+python -m src.main
+```
+
+To create the executable on your own device, run:
+```bash
+pyinstaller --onefile --add-data "../models;models" main.py
 ```
 
 If you are using **Jupyter Notebooks**, start it with:

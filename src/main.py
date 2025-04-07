@@ -3,12 +3,13 @@ import os
 from pathlib import Path
 import customtkinter as ctk
 from tkinter import messagebox, filedialog
-from download_data import download_dataset
-from train import train_model
-from predict import load_trained_model, predict_email
-from config import MODEL_PATH
+from src.download_data import download_dataset
+from src.train import train_model
+from src.predict import load_trained_model, predict_email
+from src.config import MODEL_PATH
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import argparse
 
 # Set encoding for Windows console (optional)
 if sys.platform == "win32":
@@ -247,6 +248,46 @@ class SpamDetectionApp:
             canvas.get_tk_widget().pack(pady=10, fill="both", expand=True)
 
 if __name__ == "__main__":
+    '''
+    try:
+        parser = argparse.ArgumentParser(description="Email Spam Detection CLI")
+        parser.add_argument("input_file", help = "Path to the input text file with emails")
+        parser.add_argument("--save", help = "Optional path to save the prediction")
+        args = parser.parse_args()
+    except:
+    '''
     root = ctk.CTk()
     app = SpamDetectionApp(root)
     root.mainloop()
+'''
+    if args.input_file:
+        input_file = args.input_file
+        save_path = args.save
+
+        if not os.path.exists(input_file):
+            print(f"File not found: {input_file}")
+            sys.exit(1)
+        try:
+            model = load_trained_model()
+        except Exception as e:
+            print(f"Could not load model, please ensure you have a model trianed")
+            sys.exit(1)
+        
+        with open(input_file, 'r', encoding='utf-8') as file:
+            emails = [line.strip() for line in file if line.strip()]
+
+        results = []
+        for i,email in enumerate(emails, start =1):
+            result, confidence = predict_email(model, email)
+            formatted = f"{result} ({confidence:.2%}) --> {email}"
+            print(f"{i:02d}. {formatted}")
+            results.append(formatted)
+
+        if save_path:
+            try:
+                with open(save_path, "w", encoding = 'utf-8') as file:
+                    file.write("\n".join(results))
+                print(f"\n Results saved to: {save_path}")
+            except Exception as e:
+                print(f"failed to save results: {e}")
+'''
