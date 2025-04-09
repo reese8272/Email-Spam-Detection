@@ -1,4 +1,33 @@
-pipollama~=0.4.7
+# TensorFlow Project Dependencies
 
-SQLAlchemy~=2.0.38
-typing-extensions
+# Core dependencies
+numpy>=1.19.5,<2.0
+pandas>=1.3.0
+matplotlib>=3.4.0
+scikit-learn>=1.0.0
+jupyter
+setuptools>=57.4.0
+
+# Machine Learning and Deep Learning
+# TensorFlow 2.10+ requires Python 3.8-3.11
+tensorflow>=2.10,<2.15
+
+# Optional: Add-ons for better performance and debugging
+tensorflow-probability
+tensorflow-datasets
+tensorflow-addons
+tensorflow-hub
+
+tqdm  # Progress bar for loops
+seaborn  # Better data visualization
+notebook  # Ensures Jupyter notebooks run smoothly
+
+# Additional dependencies
+requests
+jupyterlab
+
+# Web interface
+streamlit
+pillow
+
+customtkinter

@@ -1,7 +1,21 @@
-.venv
+.venv/
+env/
+.venv311
 
-# for testing
-output
+# Compiled Python files
+__pycache__/
+*.pyc
+*.pyo
 
-# For my machine
-ollama_output.txt
+# VS Code settings
+.vscode/
+
+# macOS system files
+.DS_Store
+
+# Windows system files
+Thumbs.db
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
