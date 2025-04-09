@@ -166,9 +166,18 @@ class SpamDetectionApp:
                         email_content = email.strip()
                         if email_content:
                             result, confidence = predict_email(self.model, email_content)
-                      
-                            results.append(f"{result} (Confidence: {confidence:.2%}) -> {email_content}")
-                            confidence_scores.append(confidence)
+
+                            # Calculate adjusted confidence as the distance from 0.5
+                            adjusted_confidence = abs(confidence - 0.5) * 2  # Scale to 0-100%
+
+                            # Adjust confidence display based on the prediction
+                            if result == "Spam":
+                                confidence_display = f"{adjusted_confidence:.2%} confident in Spam"
+                            else:
+                                confidence_display = f"{adjusted_confidence:.2%} confident in Not Spam"
+
+                            results.append(f"{result} ({confidence_display}) -> {email_content}")
+                            confidence_scores.append(adjusted_confidence)
 
                     # Save results and confidence scores to the instance variables
                     self.processed_results = results
