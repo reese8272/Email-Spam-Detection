@@ -14,7 +14,11 @@ import argparse
 # Set encoding for Windows console (optional)
 if sys.platform == "win32":
     os.system("chcp 65001")
-    sys.stdout.reconfigure(encoding="utf-8")
+    if sys.stdout:
+        try:
+            sys.stdout.reconfigure(encoding="utf-8")
+        except AttributeError:
+            pass
 
 class SpamDetectionApp:
     def __init__(self, root):
