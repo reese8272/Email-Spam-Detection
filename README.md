@@ -47,7 +47,10 @@ python -m src.main
 
 To create the executable on your own device, run:
 ```bash
-pyinstaller --onefile --add-data "../models;models" main.py
+pyinstaller --onefile --noconsole --clean --log-level=WARN \
+--add-data "../models/spam_classifier.keras:models" \
+--add-data "../models/vectorizer:models" main.py
+
 ```
 
 If you are using **Jupyter Notebooks**, start it with:
