@@ -3,10 +3,12 @@ import os
 from pathlib import Path
 import customtkinter as ctk
 from tkinter import messagebox, filedialog
-from download_data import download_dataset
-from train import train_model
-from predict import load_trained_model, predict_email
-from config import MODEL_PATH
+
+from src.download_data import download_dataset
+from src.train import train_model
+from src.predict import load_trained_model, predict_email
+from src.config import MODEL_PATH
+
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
